@@ -1,1 +1,6 @@
+com\ecommerce\orderservice\controller\OrderController.class
+com\ecommerce\orderservice\config\KafkaProducerConfig.class
+com\ecommerce\orderservice\event\OrderCreatedEvent.class
+com\ecommerce\orderservice\dto\OrderRequest.class
 com\ecommerce\orderservice\OrderServiceApplication.class
+com\ecommerce\orderservice\service\OrderService.class

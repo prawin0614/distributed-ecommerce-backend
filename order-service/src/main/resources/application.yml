@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: order-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
   datasource:
     url: ${ORDER_DB_URL:jdbc:postgresql://localhost:5432/orderdb}
     username: ${ORDER_DB_USER:order_user}
@@ -19,3 +26,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+app:
+  kafka:
+    order-created-topic: order-created

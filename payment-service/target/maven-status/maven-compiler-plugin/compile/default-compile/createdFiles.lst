@@ -1,1 +1,4 @@
 com\ecommerce\paymentservice\PaymentServiceApplication.class
+com\ecommerce\paymentservice\service\PaymentEventListener.class
+com\ecommerce\paymentservice\event\OrderCreatedEvent.class
+com\ecommerce\paymentservice\config\KafkaConsumerConfig.class

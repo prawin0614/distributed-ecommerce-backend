@@ -4,16 +4,21 @@ server:
 spring:
   application:
     name: payment-service
-  datasource:
-    url: ${PAYMENT_DB_URL:jdbc:postgresql://localhost:5432/paymentdb}
-    username: ${PAYMENT_DB_USER:payment_user}
-    password: ${PAYMENT_DB_PASSWORD:payment_pass}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: payment-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.ecommerce.*"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.ecommerce.paymentservice.event.OrderCreatedEvent
 
 eureka:
   client:
