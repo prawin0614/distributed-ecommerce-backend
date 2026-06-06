@@ -7,7 +7,8 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-@Service
+// WEEK 2 FEATURE - TEMPORARILY DISABLED
+// Kafka listener wiring will be restored in Week 2.
 public class PaymentEventListener {
     private static final Logger logger = LoggerFactory.getLogger(PaymentEventListener.class);
 

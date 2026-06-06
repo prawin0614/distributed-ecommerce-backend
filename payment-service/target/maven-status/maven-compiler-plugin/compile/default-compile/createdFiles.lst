@@ -1,4 +1,10 @@
 com\ecommerce\paymentservice\PaymentServiceApplication.class
-com\ecommerce\paymentservice\service\PaymentEventListener.class
+com\ecommerce\paymentservice\repository\PaymentRepository.class
+com\ecommerce\paymentservice\service\PaymentService.class
 com\ecommerce\paymentservice\event\OrderCreatedEvent.class
+com\ecommerce\paymentservice\controller\PaymentController.class
+com\ecommerce\paymentservice\service\PaymentEventListener.class
+com\ecommerce\paymentservice\controller\PaymentController$ErrorResponse.class
+com\ecommerce\paymentservice\dto\PaymentRequest.class
+com\ecommerce\paymentservice\entity\Payment.class
 com\ecommerce\paymentservice\config\KafkaConsumerConfig.class

@@ -4,29 +4,25 @@ server:
 spring:
   application:
     name: order-service
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.add.type.headers: false
   datasource:
-    url: ${ORDER_DB_URL:jdbc:postgresql://localhost:5432/orderdb}
-    username: ${ORDER_DB_USER:order_user}
-    password: ${ORDER_DB_PASSWORD:order_pass}
+    url: jdbc:postgresql://localhost:5432/orderdb
+    username: postgres
+    password: team6
+    port: 5432
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
 app:
-  kafka:
-    order-created-topic: order-created
+  # WEEK 2 FEATURE - TEMPORARILY DISABLED
+  # Kafka support will be restored in Week 2.

@@ -13,7 +13,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-@Configuration
+// WEEK 2 FEATURE - TEMPORARILY DISABLED
+// Kafka producer wiring will be restored in Week 2.
 public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;

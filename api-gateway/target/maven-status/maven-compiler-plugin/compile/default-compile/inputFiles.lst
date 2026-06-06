@@ -1,0 +1,6 @@
+C:\Users\Prawin\distributed-ecommerce-microservices\backend\api-gateway\src\main\java\com\ecommerce\apigateway\ApiGatewayApplication.java
+C:\Users\Prawin\distributed-ecommerce-microservices\backend\api-gateway\src\main\java\com\ecommerce\apigateway\controller\AuthController.java
+C:\Users\Prawin\distributed-ecommerce-microservices\backend\api-gateway\src\main\java\com\ecommerce\apigateway\dto\AuthRequest.java
+C:\Users\Prawin\distributed-ecommerce-microservices\backend\api-gateway\src\main\java\com\ecommerce\apigateway\dto\AuthResponse.java
+C:\Users\Prawin\distributed-ecommerce-microservices\backend\api-gateway\src\main\java\com\ecommerce\apigateway\filter\JwtAuthenticationFilter.java
+C:\Users\Prawin\distributed-ecommerce-microservices\backend\api-gateway\src\main\java\com\ecommerce\apigateway\service\JwtService.java

@@ -14,8 +14,8 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-@EnableKafka
-@Configuration
+// WEEK 2 FEATURE - TEMPORARILY DISABLED
+// Kafka consumer wiring will be restored in Week 2.
 public class KafkaConsumerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
