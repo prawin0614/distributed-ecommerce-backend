@@ -3,6 +3,10 @@ package com.ecommerce.inventoryservice.service;
 import com.ecommerce.inventoryservice.dto.InventoryRequest;
 import com.ecommerce.inventoryservice.entity.Inventory;
 import com.ecommerce.inventoryservice.repository.InventoryRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -59,6 +63,66 @@ public class InventoryService {
             logger.error("Error retrieving inventory items", ex);
             throw new RuntimeException("Failed to retrieve inventory: " + ex.getMessage(), ex);
         }
+    }
+
+    @Transactional
+    @Retry(name = "inventoryOps", fallbackMethod = "reserveInventoryFallback")
+    @CircuitBreaker(name = "inventoryOps", fallbackMethod = "reserveInventoryFallback")
+    @RateLimiter(name = "inventoryOps", fallbackMethod = "reserveInventoryFallback")
+    public void reserveInventory(String productId, int quantity) {
+        if (productId == null || productId.isBlank()) {
+            throw new IllegalArgumentException("productId must not be blank");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("quantity must be greater than 0");
+        }
+
+        Inventory inventory = inventoryRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException("No inventory record found for productId: " + productId));
+
+        if (inventory.getAvailableQuantity() < quantity) {
+            throw new IllegalStateException("Insufficient inventory for productId: " + productId);
+        }
+
+        inventory.setAvailableQuantity(inventory.getAvailableQuantity() - quantity);
+        inventory.setReservedQuantity(inventory.getReservedQuantity() + quantity);
+        inventoryRepository.save(inventory);
+        logger.info("Reserved inventory for productId={}, quantity={}", productId, quantity);
+    }
+
+    @Transactional
+    @Retry(name = "inventoryOps", fallbackMethod = "releaseInventoryFallback")
+    @CircuitBreaker(name = "inventoryOps", fallbackMethod = "releaseInventoryFallback")
+    @RateLimiter(name = "inventoryOps", fallbackMethod = "releaseInventoryFallback")
+    public void releaseReservedInventory(String productId, int quantity) {
+        if (productId == null || productId.isBlank()) {
+            throw new IllegalArgumentException("productId must not be blank");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("quantity must be greater than 0");
+        }
+
+        Inventory inventory = inventoryRepository.findById(productId)
+                .orElseThrow(() -> new IllegalStateException("No inventory record found for productId: " + productId));
+
+        int releasable = Math.min(quantity, inventory.getReservedQuantity());
+        inventory.setReservedQuantity(inventory.getReservedQuantity() - releasable);
+        inventory.setAvailableQuantity(inventory.getAvailableQuantity() + releasable);
+        inventoryRepository.save(inventory);
+
+        logger.info("[SAGA] Inventory released for productId={}, quantity={}", productId, releasable);
+    }
+
+    private void reserveInventoryFallback(String productId, int quantity, Throwable ex) {
+        logger.error("[SAGA] reserveInventory fallback productId={} quantity={} reason={}",
+                productId, quantity, ex.getMessage(), ex);
+        throw new IllegalStateException("Inventory reservation fallback triggered for productId: " + productId, ex);
+    }
+
+    private void releaseInventoryFallback(String productId, int quantity, Throwable ex) {
+        logger.error("[SAGA] releaseReservedInventory fallback productId={} quantity={} reason={}",
+                productId, quantity, ex.getMessage(), ex);
+        throw new IllegalStateException("Inventory release fallback triggered for productId: " + productId, ex);
     }
 
     public boolean deleteInventory(String productId) {

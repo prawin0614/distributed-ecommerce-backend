@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "PaymentFailedEvent",
+  "namespace": "com.ecommerce.events.avro",
+  "fields": [
+    { "name": "orderId", "type": "string" },
+    { "name": "productId", "type": "string" },
+    { "name": "reservedQuantity", "type": "int" },
+    { "name": "reason", "type": "string" },
+    { "name": "status", "type": "string" }
+  ]
+}

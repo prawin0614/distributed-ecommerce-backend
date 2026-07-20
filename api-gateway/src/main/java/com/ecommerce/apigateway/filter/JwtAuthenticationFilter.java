@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class JwtAuthenticationFilter implements GlobalFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
     private final JwtService jwtService;
 
     public JwtAuthenticationFilter(JwtService jwtService) {

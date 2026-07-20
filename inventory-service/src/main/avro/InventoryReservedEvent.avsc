@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "InventoryReservedEvent",
+  "namespace": "com.ecommerce.events.avro",
+  "fields": [
+    { "name": "orderId", "type": "string" },
+    { "name": "productId", "type": "string" },
+    { "name": "reservedQuantity", "type": "int" },
+    { "name": "status", "type": "string" }
+  ]
+}

@@ -4,6 +4,23 @@ server:
 spring:
   application:
     name: payment-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: payment-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      retries: 3
+      acks: all
+    listener:
+      ack-mode: record
+    properties:
+      schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8085}
+      specific.avro.reader: true
   datasource:
     url: jdbc:postgresql://localhost:5432/paymentdb
     username: postgres
@@ -22,3 +39,31 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+app:
+  kafka:
+    topics:
+      inventory-reserved: inventory-reserved
+      payment-completed: payment-completed
+      payment-failed: payment-failed
+      order-cancelled: order-cancelled
+    consumer-groups:
+      payment: payment-group
+
+resilience4j:
+  retry:
+    instances:
+      paymentOps:
+        max-attempts: 3
+        wait-duration: 500ms
+  circuitbreaker:
+    instances:
+      paymentOps:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+  ratelimiter:
+    instances:
+      paymentOps:
+        limit-for-period: 50
+        limit-refresh-period: 1s
+        timeout-duration: 0

@@ -1,0 +1,8 @@
+com\ecommerce\events\avro\InventoryReleasedEvent$Builder.class
+com\ecommerce\notificationservice\NotificationServiceApplication.class
+com\ecommerce\events\avro\OrderCancelledEvent.class
+com\ecommerce\events\avro\OrderConfirmedEvent$Builder.class
+com\ecommerce\notificationservice\service\NotificationEventListener.class
+com\ecommerce\events\avro\OrderConfirmedEvent.class
+com\ecommerce\events\avro\OrderCancelledEvent$Builder.class
+com\ecommerce\events\avro\InventoryReleasedEvent.class

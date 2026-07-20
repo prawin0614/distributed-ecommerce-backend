@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "OrderCreatedEvent",
+  "namespace": "com.ecommerce.events.avro",
+  "fields": [
+    { "name": "orderId", "type": "string" },
+    { "name": "productId", "type": "string" },
+    { "name": "quantity", "type": "int" },
+    { "name": "status", "type": "string" }
+  ]
+}

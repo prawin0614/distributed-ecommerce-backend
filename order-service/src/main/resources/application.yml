@@ -4,6 +4,23 @@ server:
 spring:
   application:
     name: order-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: order-saga-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
+      retries: 3
+    listener:
+      ack-mode: record
+    properties:
+      schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8085}
+      specific.avro.reader: true
   datasource:
     url: jdbc:postgresql://localhost:5432/orderdb
     username: postgres
@@ -16,6 +33,26 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+
 eureka:
   instance:
     prefer-ip-address: true
@@ -24,5 +61,31 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 
 app:
-  # WEEK 2 FEATURE - TEMPORARILY DISABLED
-  # Kafka support will be restored in Week 2.
+  kafka:
+    topics:
+      order-created: order-created
+      inventory-reservation-failed: inventory-reservation-failed
+      payment-completed: payment-completed
+      payment-failed: payment-failed
+      order-confirmed: order-confirmed
+      order-cancelled: order-cancelled
+    consumer-groups:
+      order: order-saga-group
+
+resilience4j:
+  retry:
+    instances:
+      orderStateUpdate:
+        max-attempts: 3
+        wait-duration: 500ms
+  circuitbreaker:
+    instances:
+      orderStateUpdate:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+  ratelimiter:
+    instances:
+      orderStateUpdate:
+        limit-for-period: 50
+        limit-refresh-period: 1s
+        timeout-duration: 0

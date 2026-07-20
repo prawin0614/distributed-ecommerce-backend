@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "OrderCancelledEvent",
+  "namespace": "com.ecommerce.events.avro",
+  "fields": [
+    { "name": "orderId", "type": "string" },
+    { "name": "status", "type": "string" },
+    { "name": "reason", "type": "string" }
+  ]
+}

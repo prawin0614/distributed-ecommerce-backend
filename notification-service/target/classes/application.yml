@@ -1,0 +1,50 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: notification-service
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    properties:
+      schema.registry.url: ${SCHEMA_REGISTRY_URL:http://localhost:8085}
+      specific.avro.reader: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+app:
+  kafka:
+    topics:
+      order-confirmed: order-confirmed
+      order-cancelled: order-cancelled
+      inventory-released: inventory-released
+    consumer-groups:
+      notification: notification-group
+
+resilience4j:
+  retry:
+    instances:
+      notificationOps:
+        max-attempts: 3
+        wait-duration: 500ms
+  circuitbreaker:
+    instances:
+      notificationOps:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+  ratelimiter:
+    instances:
+      notificationOps:
+        limit-for-period: 50
+        limit-refresh-period: 1s
+        timeout-duration: 0
